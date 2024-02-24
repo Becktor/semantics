@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 from PIL import Image, ImageOps
 
 def tensor_to_PIL(tensor):
-    return Image.fromarray(tensor.astype(np.uint8)).convert("L")
+    return Image.fromarray(tensor.astype(np.uint8))
 
 def cutmix(batch, alpha):
     data, targets = batch
@@ -143,9 +143,9 @@ def vectorize_tensor_rgb(vector, idx_to_rgb):
         {k:v[1] for k,v in idx_to_rgb.items()},
         {k:v[2] for k,v in idx_to_rgb.items()}
         ]
-    rgb = np.zeros((3, vector.shape[0], vector.shape[1]))
+    rgb = np.zeros((vector.shape[0], vector.shape[1],vector.shape[2], 3))
     for i, color_map in enumerate(idx_to_rgb):
         vectorized = np.vectorize(color_map.get)(vector)
-        rgb[i,:,:] = vectorized
+        rgb[:,:,:,i] = vectorized
 
     return rgb
