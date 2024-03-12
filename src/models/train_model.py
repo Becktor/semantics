@@ -15,7 +15,7 @@ from torchvision.transforms import v2
 # Constants
 NUM_EPOCHS = 200
 BATCH_SIZE = 40
-DATA_ROOT = r"/mnt/d/Data"
+DATA_ROOT = r"/home/jbecktor/data/terrain"
 OUTPUT_DIR = r"reports/output/100_aug_mix_adding_images_back"
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -161,7 +161,7 @@ class DataHandler():
     def load_datasets(self):
         # Load the training and validation datasets
         data_set = RUGD(
-            labels_dir=os.path.join(self.data_root,"RUGD","orig"), 
+            labels_dir=os.path.join(self.data_root,"RUGD","RUGD_annotations"), 
             transform=self.transform,
             transform_t=self.transform_t,
         )
@@ -175,8 +175,8 @@ class DataHandler():
     def create_data_loaders(self):
         train_set, val_set = self.load_datasets()
         # Create data loaders for training and testing
-        self.train_loader = DataLoader(train_set, batch_size=self.batch_size, shuffle=True, drop_last=True)
-        self.test_loader = DataLoader(val_set, batch_size=20, shuffle=False, drop_last=True)
+        self.train_loader = DataLoader(train_set, batch_size=self.batch_size, shuffle=True, drop_last=True, pin_memory=True, num_workers=4)
+        self.test_loader = DataLoader(val_set, batch_size=20, shuffle=False, drop_last=True, pin_memory=True, num_workers=2)
 
 
 def main():

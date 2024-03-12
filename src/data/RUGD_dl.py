@@ -22,9 +22,11 @@ class RUGD(Dataset):
         self.train = train  # Whether the dataset is for training or not
         self.lbl_to_idx = {}  # Mapping from label to index
         # Get the list of image and label files
-        label_list = sorted(glob.glob(os.path.join(self.labels_dir, "*/*.png"), recursive=True))
+        #label_list = sorted(glob.glob(os.path.join(self.labels_dir, "*/*.png"), recursive=True))
+        
+        label_list = sorted(glob.glob(os.path.join(self.labels_dir, "*/*orig.png"), recursive=True))
         # Path to the colormap file
-        colormap_path = os.path.join(self.labels_dir, "../RUGD_annotation-colormap.txt")
+        colormap_path = os.path.join(self.labels_dir, "RUGD_annotation-colormap.txt")
         self.colormap = {}  # Mapping from index to color
         # Load the label to index mapping
         self.load_label_to_idx(colormap_path)
@@ -47,7 +49,7 @@ class RUGD(Dataset):
     # Get an item from the dataset
     def __getitem__(self, idx):
         lbl_path = self.sorted_label_list[idx]
-        img_path = lbl_path.replace("orig", "imgs")
+        img_path = lbl_path.replace("RUGD_annotations", "RUGD_frames-with-annotations").replace(".png_orig", "")
         pil_image = Image.open(img_path)
         label = Image.open(lbl_path)
 
@@ -58,7 +60,10 @@ class RUGD(Dataset):
                 image = self.transform(pil_image)
                 
                 label = self.target_transform(label)
+                #issue with conversion script
+                # enforce 255 is 0
                 label[label == 255] = 0
+                
                 label = F.one_hot((label[0]), 25)
                 label = label.permute(2, 0, 1).float()
 
