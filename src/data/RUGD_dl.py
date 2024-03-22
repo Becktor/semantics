@@ -24,7 +24,7 @@ class RUGD(Dataset):
         # Get the list of image and label files
         label_list = sorted(glob.glob(os.path.join(self.labels_dir, "*/*.png"), recursive=True))
         # Path to the colormap file
-        colormap_path = os.path.join(self.labels_dir, "../RUGD_annotation-colormap.txt")
+        colormap_path = os.path.join(self.labels_dir, "RUGD_annotation-colormap.txt")
         self.colormap = {}  # Mapping from index to color
         # Load the label to index mapping
         self.load_label_to_idx(colormap_path)

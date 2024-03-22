@@ -14,8 +14,8 @@ from torchvision.transforms import v2
 
 # Constants
 NUM_EPOCHS = 200
-BATCH_SIZE = 40
-DATA_ROOT = r"/mnt/d/Data"
+BATCH_SIZE = 16
+DATA_ROOT = r"/home/jobe/DATA"
 OUTPUT_DIR = r"reports/output/100_aug_mix_adding_images_back"
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -118,7 +118,7 @@ class ModelTrainer():
         # Log and save the model and evaluation results
         o_m = vectorize_tensor_rgb(masks.argmax(1), self.lbl_to_idx)
         o_o = vectorize_tensor_rgb(outputs.argmax(1), self.lbl_to_idx)
-        a_range = range(0, 20, 4)
+        a_range = range(0, 10, 2)
         log_dict = {
             "images": [wandb.Image(images[i]) for i in a_range],
             "masks_0": [wandb.Image(tensor_to_PIL(o_m[i])) for i in a_range],
@@ -175,8 +175,9 @@ class DataHandler():
     def create_data_loaders(self):
         train_set, val_set = self.load_datasets()
         # Create data loaders for training and testing
-        self.train_loader = DataLoader(train_set, batch_size=self.batch_size, shuffle=True, drop_last=True)
-        self.test_loader = DataLoader(val_set, batch_size=20, shuffle=False, drop_last=True)
+        self.train_loader = DataLoader(train_set, batch_size=self.batch_size, shuffle=True,
+                                        drop_last=True, pin_memory=True, num_workers=2)
+        self.test_loader = DataLoader(val_set, batch_size=10, shuffle=False, drop_last=True)
 
 
 def main():
